@@ -8,6 +8,16 @@ API_URLS = {
     "Whites Pharmacy - Testing": "http://10.10.20.126:8090/RmsMainServerApi/api/Order/CreateAndAssignOrder"
 }
 
+# Add cancel order URLs
+CANCEL_API_URLS = {
+    "Adam Pharmacy - Production": "http://10.2.1.6/RmsMainServerApi/api/Order/CancelOrder",
+    "Adam Pharmacy - Testing": "http://10.2.1.6:8080/RmsMainServerApi/api/Order/CancelOrder",
+    "UPC Pharmacy - Production": "http://10.10.10.181/RmsMainServerApi/api/Order/CancelOrder",
+    "UPC Pharmacy - Testing": "http://10.10.9.181:8080/RmsMainServerApi/api/Order/CancelOrder",
+    "Whites Pharmacy - Production": "https://10.10.20.200/Gateway/RmsMainServerApi/api/Order/CancelOrder",
+    "Whites Pharmacy - Testing": "http://10.10.20.126:8090/RmsMainServerApi/api/Order/CancelOrder"
+}
+
 # Default API endpoint
 DEFAULT_API_ENDPOINT = "UPC Pharmacy - Testing"
 

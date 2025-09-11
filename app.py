@@ -8,6 +8,8 @@ import pyodbc
 import requests
 from flask import Flask, render_template, request, jsonify, flash, redirect, url_for, session
 
+from config import CANCEL_API_URLS
+
 app = Flask(__name__)
 app.secret_key = 'your-secret-key-here'
 
@@ -988,6 +990,66 @@ def validate_order_data(order_data):
         errors.append("For 'not_payment' status with order value, PostToCredit payment method is required")
 
     return errors
+
+
+@app.route('/cancel-order', methods=['POST'])
+def cancel_order():
+    try:
+        selected_endpoint = request.form.get('cancel_api_endpoint')
+        custom_url = request.form.get('cancel_custom_url', '').strip()
+        order_number = request.form.get('order_number')
+        reason = request.form.get('reason')
+
+        # Use custom URL if provided, otherwise use the selected endpoint
+        if custom_url:
+            url = custom_url
+        elif selected_endpoint in CANCEL_API_URLS:
+            url = CANCEL_API_URLS[selected_endpoint]
+        else:
+            flash('Please select a valid API endpoint or provide a custom URL', 'danger')
+            return redirect(url_for('index'))
+
+        # Prepare cancel order data
+        cancel_data = {
+            "OrderNumber": order_number,
+            "Reason": reason,
+            "orders_status": "cancelled"
+        }
+
+        # Send POST request
+        headers = {'Content-Type': 'application/json'}
+        response = requests.post(url, json=cancel_data, headers=headers, timeout=30)
+
+        # Prepare response data
+        response_data = {
+            'status_code': response.status_code,
+            'response_text': response.text,
+            'url_sent': url
+        }
+
+        if response.status_code == 200:
+            flash('Order cancelled successfully!', 'success')
+        else:
+            flash(f'Error cancelling order. Status code: {response.status_code}', 'danger')
+
+        return render_template('base.html',
+                               api_urls=API_URLS,
+                               cancel_api_urls=CANCEL_API_URLS,
+                               payment_methods=PAYMENT_METHODS,
+                               payment_statuses=PAYMENT_STATUSES,
+                               payment_options=PAYMENT_OPTIONS,
+                               data=session.get('order_data', DEFAULT_DATA),
+                               products=session.get('products', []),
+                               payments=session.get('payments', []),
+                               selected_endpoint=session.get('api_endpoint', DEFAULT_API_ENDPOINT),
+                               cancel_response=response_data)
+
+    except requests.exceptions.RequestException as e:
+        flash(f'Request Error: {str(e)}', 'danger')
+        return redirect(url_for('index'))
+    except Exception as e:
+        flash(f'An error occurred: {str(e)}', 'danger')
+        return redirect(url_for('index'))
 
 
 @app.context_processor

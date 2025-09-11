@@ -183,6 +183,22 @@ function setupEventListeners() {
     });
 }
 
+// Add this function to automatically calculate totals when inputs change
+function setupAutoCalculation() {
+    // Listen for changes in order information fields
+    const orderInputs = document.querySelectorAll('#order-tab input, #order-tab select');
+    orderInputs.forEach(input => {
+        input.addEventListener('change', calculateTotals);
+    });
+
+    // Listen for changes in product and payment modals
+    document.addEventListener('change', function(e) {
+        if (e.target.closest('.modal')) {
+            calculateTotals();
+        }
+    });
+}
+
 // Update the item lookup error handling
 function handleItemLookup() {
     const formData = new FormData(document.getElementById('itemLookupForm'));
@@ -475,9 +491,16 @@ document.addEventListener('DOMContentLoaded', function() {
     paymentOptionsData.textContent = JSON.stringify({{ payment_options|tojson }});
     document.body.appendChild(paymentOptionsData);
 
+
     // Trigger change event on page load if there's a selected value
     const paymentMethodSelect = document.getElementById('paymentMethod');
     if (paymentMethodSelect) {
         paymentMethodSelect.dispatchEvent(new Event('change'));
     }
+
+            // Set up auto calculation
+    setupAutoCalculation();
+
+    // Calculate totals immediately on page load
+    calculateTotals();
 });
