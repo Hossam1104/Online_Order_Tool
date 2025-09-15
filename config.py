@@ -1,3 +1,4 @@
+# config.py
 # API URLs with descriptive names
 API_URLS = {
     "Adam Pharmacy - Production": "http://10.2.1.6/RmsMainServerApi/api/Order/CreateAndAssignOrder",
@@ -8,7 +9,7 @@ API_URLS = {
     "Whites Pharmacy - Testing": "http://10.10.20.126:8090/RmsMainServerApi/api/Order/CreateAndAssignOrder"
 }
 
-# Add cancel order URLs
+# Cancel Order API URLs
 CANCEL_API_URLS = {
     "Adam Pharmacy - Production": "http://10.2.1.6/RmsMainServerApi/api/Order/CancelOrder",
     "Adam Pharmacy - Testing": "http://10.2.1.6:8080/RmsMainServerApi/api/Order/CancelOrder",
